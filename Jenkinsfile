@@ -40,7 +40,7 @@ pipeline {
             steps {
                 echo 'Building Docker image...'
                 sh '''
-                    docker build -t $IMAGE_NAME .
+                    docker build -t $IMAGE_NAME:$DOCKER_TAG .
                 '''
             }
         }
@@ -49,7 +49,7 @@ pipeline {
             steps {
                 echo 'Pushing Docker image to Docker Hub...'
                 sh '''
-                    docker push $IMAGE_NAME
+                    docker push $IMAGE_NAME:$DOCKER_TAG
                 '''
             }
         }
@@ -59,7 +59,7 @@ pipeline {
                 echo 'Deploying Docker container...'
                 sh '''
                     docker rm -f js_app-container || true
-                    docker run -d --name js_app-container -p 3000:3000 $IMAGE_NAME
+                    docker run -d --name js_app-container -p 3000:3000 $IMAGE_NAME:$DOCKER_TAG
                 '''
             }
         }
