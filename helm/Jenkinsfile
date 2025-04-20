@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKERTAG = "v2"
+        DOCKER_TAG = "v1"
     }
 
     stages {
@@ -25,17 +25,10 @@ pipeline {
                                 git config user.email "abhishekrangra@gmail.com"
                                 git config user.name "AbhishekRangra"
 
-                                echo "Before update (values.yaml):"
-                                cat helm/mychart/values.yaml
-
-                                sed -i 's+abhishekrangra/js_app.*+abhishekrangra/js_app:'"$DOCKERTAG"'+g' helm/mychart/values.yaml
-
-                                echo "After update (values.yaml):"
-                                cat helm/mychart/values.yaml
+                                sed -i 's/tag: ".*"/tag: "'"$DOCKER_TAG"'"/g' helm/mychart/values.yaml
 
                                 git add helm/mychart/values.yaml
-                                git commit -m "Updated image tag to $DOCKERTAG"
-
+                                git commit -m "Updated image tag to $DOCKER_TAG"
                                 git push https://$GIT_USERNAME:$GIT_PASSWORD@github.com/$GIT_USERNAME/js_app.git HEAD:main
                             '''
                         }
