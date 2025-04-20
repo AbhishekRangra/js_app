@@ -3,6 +3,7 @@ pipeline {
 
     environment {
         IMAGE_NAME = 'abhishekrangra/js_app'
+        DOCKER_TAG = 'v1'
     }
 
     stages {
