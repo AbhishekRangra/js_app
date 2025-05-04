@@ -4,6 +4,7 @@ pipeline {
     environment {
         IMAGE_NAME = 'abhishekrangra/js_app'
         DOCKER_TAG = 'v1'
+        SLACK_CHANNEL = '#jenkins'
     }
 
     stages {
@@ -68,28 +69,15 @@ pipeline {
     post {
         always {
             echo 'Pipeline execution completed.'
+            cleanWs()
         }
         success {
             echo 'Docker image built, pushed, and deployed successfully.'
+            slackSend(channel: "${SLACK_CHANNEL}", message: "✅ *Pipeline Successful*: `${JOB_NAME}` build #${BUILD_NUMBER} (<${BUILD_URL}|View Build>)")
         }
         failure {
             echo 'Pipeline failed. Check error logs.'
-        }
-
-        environment {
-            SLACK_CHANNEL = '#jenkins'
-        }
-
-        post {
-            success {
-                slackSend(channel: "${SLACK_CHANNEL}", message: "✅ *Pipeline Successful*: `${JOB_NAME}` build #${BUILD_NUMBER} (<${BUILD_URL}|View Build>)")
-            }
-            failure {
-                slackSend(channel: "${SLACK_CHANNEL}", message: "🚨 *Pipeline Failed*: `${JOB_NAME}` build #${BUILD_NUMBER} (<${BUILD_URL}|View Build>)")
-            }
-            always {
-                cleanWs()
-            }
+            slackSend(channel: "${SLACK_CHANNEL}", message: "🚨 *Pipeline Failed*: `${JOB_NAME}` build #${BUILD_NUMBER} (<${BUILD_URL}|View Build>)")
         }
     }
 }
